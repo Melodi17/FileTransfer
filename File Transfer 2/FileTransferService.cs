@@ -62,8 +62,6 @@ namespace File_Transfer_2
                 {
                     Server.Send(client, "Denied");
                     ConnectionRequestAccept[client.SocketId()] = false;
-                    /* Disconnect them so they can't exploit this */
-                    client.Close();
                 }
             };
             Server.onDisconnect = client =>
