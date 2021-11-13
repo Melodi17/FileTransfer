@@ -36,7 +36,6 @@ namespace File_Transfer_2
             InitializeComponent();
             //Authenticate();
             progressBar1.Hide();
-
         }
 
         // Code to fix below
@@ -459,7 +458,7 @@ namespace File_Transfer_2
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            FileTransferService.Init();   
+            FileTransferService.Init(this);   
         }
     }
 }

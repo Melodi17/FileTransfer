@@ -239,7 +239,7 @@ namespace File_Transfer_2
         private System.Windows.Forms.TextBox speed;
         private System.Windows.Forms.CheckedListBox checkedListBox1;
         private System.Windows.Forms.Button sendbutton;
-        private System.Windows.Forms.ProgressBar progressBar1;
+        public System.Windows.Forms.ProgressBar progressBar1;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }

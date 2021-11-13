@@ -12,6 +12,7 @@ namespace File_Transfer_2
 {
     public static class FileTransferService
     {
+        public static Form1 MainForm;
         public static int Port = 5001;
         public static int TCPPacketSizeMax = 65535;
         public static int TCPPacketMarginSize = 535;
@@ -92,19 +93,23 @@ namespace File_Transfer_2
 
                     byte[] fileContent = File.ReadAllBytes(file);
                     byte[][] fileContentSplit = SplitForSending(fileContent, TCPPacketCalculatedSize);
-                    
-                    
+
+                    MainForm.progressBar1.Maximum = fileContentSplit.Length;
+                    MainForm.progressBar1.Value = 0;
                     
                     foreach (string chunk in fileContentSplit.Select(Convert.ToBase64String))
                         /* The select allows us to foreach the array really quickly do
                          * something to each part of it. In this case I am converting
-                         * it all to base 64 strings. */
-                        /* Base 64 strings allow us to store bytes without loosing any data in
+                         * it all to base 64 strings.
+                         * Base 64 strings allow us to store bytes without loosing any data in
                          * the conversion. */
                     {
                         client.Send(chunk);
+                        MainForm.progressBar1.Value++;
                         Thread.Sleep(50);
                     }
+                    
+                    MainForm.progressBar1.Value = MainForm.progressBar1.Maximum;
                 }
                 else
                 {
@@ -114,8 +119,9 @@ namespace File_Transfer_2
             };
             client.Start();
         }
-        public static void Init()
+        public static void Init(Form1 form1)
         {
+            MainForm = form1;
             DownloadPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
             Server = new TCPConnectionServer(Port);
 
