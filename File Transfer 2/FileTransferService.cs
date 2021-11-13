@@ -15,10 +15,10 @@ namespace File_Transfer_2
         /* Only 'local' variables start with a lower-case letter, these are global because
          * they can be accessed anywhere in the code. Local variables are like the stuff
          * in function and are only temporary. */
-        public static Dictionary<ulong, bool> DeviceFriendlyNames;
+        public static Dictionary<long, bool> ConnectionRequestAccept;
         /* A dictionary is like a list but instead of an index like this mylist[0] we do this
          * mydictionary["key"] so the 'index' is like the key to get the value
-         * the ulong is basically just a number that can have a really high value
+         * the long is basically just a number that can have a really high value
          * higher than an int, but it can only have positive numbers and 0. We probably won't
          * end up using this Dictionary but it is good practice so you understand. */
         public static byte[][] SplitForSending(byte[] buffer, int blockSize)
@@ -55,11 +55,15 @@ namespace File_Transfer_2
                 if (result == DialogResult.OK)
                 {
                     Server.Send(client, "Accepted");
+                    ConnectionRequestAccept[client.SocketId()] = true;
                     /* Get ready for download bytes */
                 }
                 else
                 {
                     Server.Send(client, "Denied");
+                    ConnectionRequestAccept[client.SocketId()] = false;
+                    /* Disconnect them so they can't exploit this */
+                    client.Close();
                 }
             };
             Server.onDisconnect = client =>
@@ -68,7 +72,14 @@ namespace File_Transfer_2
             };
             Server.onMessage = (client, message) =>
             {
+                if (ConnectionRequestAccept.ContainsKey(client.SocketId()))
+                {
+                    if (ConnectionRequestAccept[client.SocketId()])
+                    /* Makes sure we accepted the connection before allowing download */
+                    {
 
+                    }
+                }
             };
 
             Server.Start();

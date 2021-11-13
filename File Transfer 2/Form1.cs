@@ -39,7 +39,6 @@ namespace File_Transfer_2
 
         }
 
-
         // Code to fix below
         #region Old Code
         //private void Authenticate()
