@@ -15,6 +15,9 @@ namespace File_Transfer_2
         public static int TCPPacketSizeMax = 65535;
         public static int TCPPacketMarginSize = 535;
         public static int TCPPacketCalculatedSize => TCPPacketSizeMax - TCPPacketMarginSize;
+        /* This is called a property, its a cross between a function and a variable.
+         * It returns the result every time it is mentioned so it can change over time.
+         * When the variables in it change. */
         public static string DownloadPath;
         public static TCPConnectionServer Server;
         /* Only 'local' variables start with a lower-case letter, these are global because
