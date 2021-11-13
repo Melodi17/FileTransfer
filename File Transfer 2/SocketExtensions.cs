@@ -5,7 +5,7 @@ namespace Melodi.Networking
 {
     public static class SocketExtensions
     {
-        private static ObjectIDGenerator generator = new();
+        private static ObjectIDGenerator generator = new ObjectIDGenerator();
         public static bool IsConnected(this Socket socket)
         {
             try
