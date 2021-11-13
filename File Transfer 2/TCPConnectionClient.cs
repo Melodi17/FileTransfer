@@ -24,7 +24,7 @@ namespace Melodi.Networking
         }
         public void Start()
         {
-            this.TcpClient = new();
+            this.TcpClient = new TcpClient();
             try
             {
                 this.TcpClient.Connect(this.Host, this.Port);
@@ -39,7 +39,7 @@ namespace Melodi.Networking
             }
             HandleConnect();
             running = true;
-            StreamReader reader = new(this.TcpClient.GetStream());
+            StreamReader reader = new StreamReader(this.TcpClient.GetStream());
 
             t = new Thread(() =>
             {
@@ -91,7 +91,7 @@ namespace Melodi.Networking
         }
         public void Send(string buffer)
         {
-            StreamWriter writer = new(this.TcpClient.GetStream());
+            StreamWriter writer = new StreamWriter(this.TcpClient.GetStream());
             writer.AutoFlush = true;
             writer.WriteLine(buffer);
         }
