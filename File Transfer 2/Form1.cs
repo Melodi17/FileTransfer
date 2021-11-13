@@ -38,11 +38,11 @@ namespace File_Transfer_2
         public Form1()
         {
             InitializeComponent();
-            authenticate();
+            Authenticate();
             progressBar1.Hide();
         
         }
-        private void authenticate()
+        private void Authenticate()
         {
             string path = ExeFilePath.Replace(ExeName, "");
             if (File.Exists(path + "\\Data\\settings.config") && Directory.Exists(path + "\\Data"))
@@ -72,7 +72,7 @@ namespace File_Transfer_2
                     tabControl1.SelectedIndex = 0;
                     input1.Text = username;
                     StartListening();
-                    sendtext("~ping");
+                    Sendtext("~ping");
                 }
 
             }
@@ -85,7 +85,7 @@ namespace File_Transfer_2
                 Directory.CreateDirectory(path + "\\Data");
                 File.Create(path + "\\Data\\settings.config").Dispose();
 
-                authenticate();
+                Authenticate();
             }
 
         }
@@ -210,7 +210,7 @@ namespace File_Transfer_2
                     {
                         checkedListBox1.Items.Clear();
                     }
-                    sendtext("~resping " + username + " " + myip);
+                    Sendtext("~resping " + username + " " + myip);
                 }
                 else
                 {
@@ -284,7 +284,7 @@ namespace File_Transfer_2
             }
             StartListening();
         }
-        private void sendbutton_Click(object sender, EventArgs e)
+        private void Sendbutton_Click(object sender, EventArgs e)
         {
             string recipients = "";
             foreach (string item in checkedListBox1.SelectedItems)
@@ -306,9 +306,9 @@ namespace File_Transfer_2
                         string myip = Dns.GetHostEntry(Dns.GetHostName()).AddressList[1].ToString();
                         string filename = Path.GetFileName(path);
                         //upload();
-                        Thread t = new Thread(new ThreadStart(upload));
+                        Thread t = new Thread(new ThreadStart(Upload));
                         t.Start();
-                        sendtext("~uploading " + recipients + " " + filename.Replace(" ", "_") + " " + username + " " + myfile.Length.ToString());
+                        Sendtext("~uploading " + recipients + " " + filename.Replace(" ", "_") + " " + username + " " + myfile.Length.ToString());
                     }
                     catch (Exception)
                     {
@@ -322,7 +322,7 @@ namespace File_Transfer_2
                 MessageBox.Show("Choose a recipient first!");
             }
         }
-        private byte[][] splitForSending(byte[] buffer, int blockSize)
+        private byte[][] SplitForSending(byte[] buffer, int blockSize)
         {
             byte[][] blocks = new byte[(buffer.Length + blockSize - 1) / blockSize][];
 
@@ -334,11 +334,11 @@ namespace File_Transfer_2
 
             return blocks;
         }
-        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        private void BackgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-            upload();
+            Upload();
         }
-        private void upload()
+        private void Upload()
         {
             ThreadPool.QueueUserWorkItem(o =>
             {
@@ -355,7 +355,7 @@ namespace File_Transfer_2
                         int i = 0;
                         int timeout = 1;
                         int chunksize = 10000;
-                        byte[][] bte = splitForSending(File.ReadAllBytes(path), chunksize);
+                        byte[][] bte = SplitForSending(File.ReadAllBytes(path), chunksize);
                         foreach (byte[] item in bte)
                         {
                             ns.Write(item, 0, item.Length);
@@ -370,7 +370,7 @@ namespace File_Transfer_2
                 server.Stop();
             });
         }
-        private void sendtext(string msg)
+        private void Sendtext(string msg)
         {
             byte[] bytes = Encoding.ASCII.GetBytes(msg);
             UdpClient client = new UdpClient();
@@ -407,7 +407,7 @@ namespace File_Transfer_2
             }
             return rv;
         }
-        private void signup_Click(object sender, EventArgs e)
+        private void Signup_Click(object sender, EventArgs e)
         {
             if (input1.Text != "" && input1.Text != null)
             {
@@ -416,26 +416,26 @@ namespace File_Transfer_2
                 contents[0] = "Username = " + input1.Text;
                 contents[1] = "Download Folder = " + DownloadPath.Text;
                 File.WriteAllLines(path + "\\Data\\settings.config", contents);
-                authenticate();
+                Authenticate();
             }
             else
             {
                 input1.Text = username;
             }
         }
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
             if (folderDlg.ShowDialog() == DialogResult.OK)
             {
                 DownloadPath.Text = folderDlg.SelectedPath;
             }
         }
-        private void button2_Click(object sender, EventArgs e)
+        private void Button2_Click(object sender, EventArgs e)
         {
         }
-        private void ping_Click(object sender, EventArgs e)
+        private void Ping_Click(object sender, EventArgs e)
         {
-            sendtext("~ping");
+            Sendtext("~ping");
         }
 
        
