@@ -211,6 +211,7 @@ namespace File_Transfer_2
             this.ClientSize = new System.Drawing.Size(594, 324);
             this.Controls.Add(this.tabControl1);
             this.Name = "Form1";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl1.ResumeLayout(false);
             this.Main.ResumeLayout(false);
             this.Main.PerformLayout();

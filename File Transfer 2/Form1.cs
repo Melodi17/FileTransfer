@@ -445,8 +445,22 @@ namespace File_Transfer_2
             dialog.ShowDialog();
             if (dialog.FileName != null)
             {
-                FileTransferService.Send("user", dialog.FileName);
+                new Thread(() =>
+                {
+                    Thread.CurrentThread.IsBackground = true;
+
+                    FileTransferService.Send("user", dialog.FileName);
+                });
             }
+            else
+            {
+                MessageBox.Show("No file was selected", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            FileTransferService.Init();   
         }
     }
 }

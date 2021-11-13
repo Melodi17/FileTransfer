@@ -25,5 +25,9 @@ namespace File_Transfer_2
         {
 
         }
+        public static void Init()
+        {
+
+        }
     }
 }
