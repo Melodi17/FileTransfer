@@ -125,7 +125,7 @@ namespace File_Transfer_2
             this.sendbutton.TabIndex = 0;
             this.sendbutton.Text = "send";
             this.sendbutton.UseVisualStyleBackColor = true;
-            this.sendbutton.Click += new System.EventHandler(this.Sendbutton_Click);
+            //this.sendbutton.Click += new System.EventHandler(this.Sendbutton_Click);
             // 
             // progressBar1
             // 
@@ -185,7 +185,7 @@ namespace File_Transfer_2
             this.signup.TabStop = false;
             this.signup.Text = "confirm";
             this.signup.UseVisualStyleBackColor = true;
-            this.signup.Click += new System.EventHandler(this.Signup_Click);
+            //this.signup.Click += new System.EventHandler(this.Signup_Click);
             // 
             // label1
             // 
@@ -217,7 +217,7 @@ namespace File_Transfer_2
             // 
             this.backgroundWorker1.WorkerReportsProgress = true;
             this.backgroundWorker1.WorkerSupportsCancellation = true;
-            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker1_DoWork);
+            //this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker1_DoWork);
             // 
             // Form1
             // 

@@ -29,12 +29,12 @@ namespace File_Transfer_2
         private readonly UdpClient udp2 = new UdpClient(infoport);
         IAsyncResult ar_2 = null;
         string ExeFilePath = System.Reflection.Assembly.GetEntryAssembly().Location;
-        string ExeName = System.AppDomain.CurrentDomain.FriendlyName;
+        string ExeName = AppDomain.CurrentDomain.FriendlyName;
         SimpleTcpClient client;
         public Form1()
         {
             InitializeComponent();
-            Authenticate();
+            //Authenticate();
             progressBar1.Hide();
 
         }
