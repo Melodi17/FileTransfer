@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Melodi.Networking;
 
 namespace File_Transfer_2
@@ -14,11 +15,12 @@ namespace File_Transfer_2
         /* Only 'local' variables start with a lower-case letter, these are global because
          * they can be accessed anywhere in the code. Local variables are like the stuff
          * in function and are only temporary. */
-        public static Dictionary<ulong, string> DeviceFriendlyNames; 
+        public static Dictionary<ulong, bool> DeviceFriendlyNames;
         /* A dictionary is like a list but instead of an index like this mylist[0] we do this
          * mydictionary["key"] so the 'index' is like the key to get the value
          * the ulong is basically just a number that can have a really high value
-         * higher than an int, but it can only have positive numbers and 0. */
+         * higher than an int, but it can only have positive numbers and 0. We probably won't
+         * end up using this Dictionary but it is good practice so you understand. */
         public static byte[][] SplitForSending(byte[] buffer, int blockSize)
         {
             byte[][] blocks = new byte[(buffer.Length + blockSize - 1) / blockSize][];
@@ -49,7 +51,16 @@ namespace File_Transfer_2
              * to the UI so the UI will not be affected unless we invoke it. The 'client'
              * part is what we choose to name the argument passed to us. */
             {
-
+                DialogResult result = MessageBox.Show($"{client.Client.RemoteEndPoint} would like to send you a file", "File sharing request", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                if (result == DialogResult.OK)
+                {
+                    Server.Send(client, "Accepted");
+                    /* Get ready for download bytes */
+                }
+                else
+                {
+                    Server.Send(client, "Denied");
+                }
             };
             Server.onDisconnect = client =>
             {
