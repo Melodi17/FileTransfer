@@ -449,7 +449,7 @@ namespace File_Transfer_2
                     Thread.CurrentThread.IsBackground = true;
 
                     FileTransferService.Send("user", dialog.FileName);
-                });
+                }).Start();
             }
             else
             {

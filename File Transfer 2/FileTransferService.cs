@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Melodi.Networking;
@@ -41,13 +42,77 @@ namespace File_Transfer_2
 
             return blocks;
         }
+        public static void AppendAllBytes(string path, byte[] bytes)
+        {
+            using (var stream = new FileStream(path, FileMode.Append))
+            {
+                stream.Write(bytes, 0, bytes.Length);
+            }
+        }
         public static void Discover()
         {
             // TODO: Implement this method/function
         }
         public static void Send(string destination, string file)
         {
+            TCPConnectionClient client = new TCPConnectionClient(destination, Port);
+            client.onConnect = () =>
+            {
+                /* Do nothing for now */
+            };
+            client.onConnectFailed = () =>
+            {
+                client.Stop();
+                MessageBox.Show("Server was unreachable", "File sharing request failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            };
+            client.onDisconnect = () =>
+            {
+                client.Stop();
+                MessageBox.Show("Server aborted request", "File sharing request aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            };
+            client.onMessage = message =>
+            {
+                if (message == "Denied")
+                {
+                    client.Stop();
+                    MessageBox.Show("Server denied request", "File sharing request denied", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                else if (message == "Accepted")
+                {
+                    string flName = Path.GetFileName(file);
+                    /* This will only get the file name like this
+                     * we give it C:\users\melod\Documents\test.txt
+                     * and it returns test.txt this is so the other side
+                     * will know what type of file it is. */
+                    client.Send(flName);
+                    /* This tells the server what the file is called */
+                    
+                    Thread.Sleep(1000); 
+                    /* Give the server some time to prepare */
 
+                    byte[] fileContent = File.ReadAllBytes(file);
+                    byte[][] fileContentSplit = SplitForSending(fileContent, TCPPacketCalculatedSize);
+                    
+                    
+                    
+                    foreach (string chunk in fileContentSplit.Select(Convert.ToBase64String))
+                        /* The select allows us to foreach the array really quickly do
+                         * something to each part of it. In this case I am converting
+                         * it all to base 64 strings. */
+                        /* Base 64 strings allow us to store bytes without loosing any data in
+                         * the conversion. */
+                    {
+                        client.Send(chunk);
+                        Thread.Sleep(50);
+                    }
+                }
+                else
+                {
+                    client.Stop();
+                    MessageBox.Show("Server send invalid data back", "File sharing request failed", MessageBoxButtons.OK, MessageBoxIcon.Error);   
+                }
+            };
+            client.Start();
         }
         public static void Init()
         {
@@ -55,7 +120,7 @@ namespace File_Transfer_2
             Server = new TCPConnectionServer(Port);
 
             Server.onConnect = client =>
-            /* This is a delegate, it is an anonamous function, so it doesn't have a name
+            /* This is a delegate, it is an anonymous function, so it doesn't have a name
              * it is similar to an action. The code inside these run on a different thread
              * to the UI so the UI will not be affected unless we invoke it. The 'client'
              * part is what we choose to name the argument passed to us. */
@@ -75,27 +140,34 @@ namespace File_Transfer_2
             };
             Server.onDisconnect = client =>
             {
+                long clientId = client.SocketId();
+                
                 /* Delete connection record to free up space */
+
+                if (ConnectionRequestAccept.ContainsKey(clientId)) ConnectionRequestAccept.Remove(clientId);
+                if (ConnectionFileName.ContainsKey(clientId)) ConnectionFileName.Remove(clientId);
             };
             Server.onMessage = (client, message) =>
             {
-                long clientID = client.SocketId();
-                if (ConnectionRequestAccept.ContainsKey(clientID))
+                long clientId = client.SocketId();
+                if (ConnectionRequestAccept.ContainsKey(clientId))
                 {
-                    if (ConnectionRequestAccept[clientID])
+                    if (ConnectionRequestAccept[clientId])
                     /* Makes sure we accepted the connection before allowing download */
                     {
-                        if (ConnectionFileName.ContainsKey(clientID))
+                        if (ConnectionFileName.ContainsKey(clientId))
                         /* Work out if this is the first message, and if so, it will
                          * set the filename to this message. If not, it will start building
                          * the file. */
                         {
-                            File.AppendAllText(Path.Combine(DownloadPath, ConnectionFileName[clientID]), message);
+                            AppendAllBytes(Path.Combine(DownloadPath, ConnectionFileName[clientId]), Convert.FromBase64String(message));
+                            /* Base 64 strings allow us to store bytes without loosing any data in
+                             * the conversion. */
                         }
                         else
                         {
-                            ConnectionFileName[clientID] = message;
-                            File.WriteAllText(Path.Combine(DownloadPath, ConnectionFileName[clientID]), "");
+                            ConnectionFileName[clientId] = message;
+                            File.WriteAllText(Path.Combine(DownloadPath, ConnectionFileName[clientId]), "");
                             /* Generate empty file */
                         }
                     }
