@@ -21,5 +21,9 @@ namespace File_Transfer_2
 
             return blocks;
         }
+        public static void Send(string destination, string file)
+        {
+
+        }
     }
 }

@@ -14,14 +14,14 @@ namespace Melodi.Networking
         private TcpListener TcpListener;
         private bool Running = false;
         private Thread _t = null;
-        public List<TcpClient> Clients = new();
+        public List<TcpClient> Clients = new List<TcpClient>();
         public Action<TcpClient, string> onMessage = null;
         public Action<TcpClient> onConnect = null;
         public Action<TcpClient> onDisconnect = null;
         public TCPConnectionServer(int port)
         {
             this.Port = port;
-            this.TcpListener = new(IPAddress.Any, port);
+            this.TcpListener = new TcpListener(IPAddress.Any, port);
         }
         public void Start()
         {
@@ -67,14 +67,14 @@ namespace Melodi.Networking
         }
         public void Send(TcpClient client, string buffer)
         {
-            StreamWriter writer = new(Clients.First(x => x.SocketId() == client.SocketId()).GetStream());
+            StreamWriter writer = new StreamWriter(Clients.First(x => x.SocketId() == client.SocketId()).GetStream());
             writer.AutoFlush = true;
             writer.WriteLine(buffer);
         }
         private void HandleConnect(TcpClient client)
         {
             Clients.Add(client);
-            StreamReader reader = new(client.GetStream());
+            StreamReader reader = new StreamReader(client.GetStream());
 
             new Thread(() =>
             {
