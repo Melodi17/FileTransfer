@@ -12,6 +12,9 @@ namespace File_Transfer_2
     public static class FileTransferService
     {
         public static int Port = 5001;
+        public static int TCPPacketSizeMax = 65535;
+        public static int TCPPacketMarginSize = 535;
+        public static int TCPPacketCalculatedSize => TCPPacketSizeMax - TCPPacketMarginSize;
         public static string DownloadPath;
         public static TCPConnectionServer Server;
         /* Only 'local' variables start with a lower-case letter, these are global because
@@ -81,7 +84,8 @@ namespace File_Transfer_2
                     {
                         if (ConnectionFileName.ContainsKey(clientID))
                         /* Work out if this is the first message, and if so, it will
-                         * Set the filename to this message. If not, it will*/
+                         * set the filename to this message. If not, it will start building
+                         * the file. */
                         {
                             File.AppendAllText(Path.Combine(DownloadPath, ConnectionFileName[clientID]), message);
                         }
