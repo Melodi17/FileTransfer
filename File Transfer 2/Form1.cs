@@ -439,5 +439,14 @@ namespace File_Transfer_2
         //}
         #endregion
 
+        private void sendbutton_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.ShowDialog();
+            if (dialog.FileName != null)
+            {
+                FileTransferService.Send("user", dialog.FileName);
+            }
+        }
     }
 }

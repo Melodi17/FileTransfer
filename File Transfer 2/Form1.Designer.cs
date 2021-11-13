@@ -34,7 +34,6 @@ namespace File_Transfer_2
             this.Main = new System.Windows.Forms.TabPage();
             this.eta = new System.Windows.Forms.TextBox();
             this.speed = new System.Windows.Forms.TextBox();
-            this.ping = new System.Windows.Forms.Button();
             this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
             this.sendbutton = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
@@ -68,14 +67,13 @@ namespace File_Transfer_2
             // 
             this.Main.Controls.Add(this.eta);
             this.Main.Controls.Add(this.speed);
-            this.Main.Controls.Add(this.ping);
             this.Main.Controls.Add(this.checkedListBox1);
             this.Main.Controls.Add(this.sendbutton);
             this.Main.Controls.Add(this.progressBar1);
-            this.Main.Location = new System.Drawing.Point(4, 22);
+            this.Main.Location = new System.Drawing.Point(4, 25);
             this.Main.Name = "Main";
             this.Main.Padding = new System.Windows.Forms.Padding(3);
-            this.Main.Size = new System.Drawing.Size(576, 284);
+            this.Main.Size = new System.Drawing.Size(576, 281);
             this.Main.TabIndex = 0;
             this.Main.Text = "Main";
             this.Main.UseVisualStyleBackColor = true;
@@ -84,7 +82,7 @@ namespace File_Transfer_2
             // 
             this.eta.Location = new System.Drawing.Point(106, 194);
             this.eta.Name = "eta";
-            this.eta.Size = new System.Drawing.Size(196, 20);
+            this.eta.Size = new System.Drawing.Size(196, 22);
             this.eta.TabIndex = 9;
             this.eta.Visible = false;
             // 
@@ -92,18 +90,9 @@ namespace File_Transfer_2
             // 
             this.speed.Location = new System.Drawing.Point(106, 171);
             this.speed.Name = "speed";
-            this.speed.Size = new System.Drawing.Size(196, 20);
+            this.speed.Size = new System.Drawing.Size(196, 22);
             this.speed.TabIndex = 4;
             this.speed.Visible = false;
-            // 
-            // ping
-            // 
-            this.ping.Location = new System.Drawing.Point(314, 0);
-            this.ping.Name = "ping";
-            this.ping.Size = new System.Drawing.Size(75, 23);
-            this.ping.TabIndex = 8;
-            this.ping.Text = "ping";
-            this.ping.UseVisualStyleBackColor = true;
             // 
             // checkedListBox1
             // 
@@ -112,20 +101,20 @@ namespace File_Transfer_2
             this.checkedListBox1.FormattingEnabled = true;
             this.checkedListBox1.Location = new System.Drawing.Point(395, 6);
             this.checkedListBox1.Name = "checkedListBox1";
-            this.checkedListBox1.Size = new System.Drawing.Size(178, 270);
+            this.checkedListBox1.Size = new System.Drawing.Size(178, 255);
             this.checkedListBox1.TabIndex = 7;
             // 
             // sendbutton
             // 
             this.sendbutton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.sendbutton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sendbutton.Location = new System.Drawing.Point(106, 133);
+            this.sendbutton.Location = new System.Drawing.Point(106, 131);
             this.sendbutton.Name = "sendbutton";
             this.sendbutton.Size = new System.Drawing.Size(196, 37);
             this.sendbutton.TabIndex = 0;
             this.sendbutton.Text = "send";
             this.sendbutton.UseVisualStyleBackColor = true;
-            //this.sendbutton.Click += new System.EventHandler(this.Sendbutton_Click);
+            this.sendbutton.Click += new System.EventHandler(this.sendbutton_Click);
             // 
             // progressBar1
             // 
@@ -142,10 +131,10 @@ namespace File_Transfer_2
             this.Settings.Controls.Add(this.signup);
             this.Settings.Controls.Add(this.label1);
             this.Settings.Controls.Add(this.input1);
-            this.Settings.Location = new System.Drawing.Point(4, 22);
+            this.Settings.Location = new System.Drawing.Point(4, 25);
             this.Settings.Name = "Settings";
             this.Settings.Padding = new System.Windows.Forms.Padding(3);
-            this.Settings.Size = new System.Drawing.Size(576, 284);
+            this.Settings.Size = new System.Drawing.Size(576, 281);
             this.Settings.TabIndex = 1;
             this.Settings.Text = "Settings";
             this.Settings.UseVisualStyleBackColor = true;
@@ -164,7 +153,7 @@ namespace File_Transfer_2
             this.DownloadPath.Location = new System.Drawing.Point(107, 132);
             this.DownloadPath.Name = "DownloadPath";
             this.DownloadPath.ReadOnly = true;
-            this.DownloadPath.Size = new System.Drawing.Size(419, 20);
+            this.DownloadPath.Size = new System.Drawing.Size(419, 22);
             this.DownloadPath.TabIndex = 4;
             // 
             // label2
@@ -172,7 +161,7 @@ namespace File_Transfer_2
             this.label2.Enabled = false;
             this.label2.Location = new System.Drawing.Point(107, 108);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(182, 20);
+            this.label2.Size = new System.Drawing.Size(182, 22);
             this.label2.TabIndex = 3;
             this.label2.Text = "download location:";
             // 
@@ -185,7 +174,6 @@ namespace File_Transfer_2
             this.signup.TabStop = false;
             this.signup.Text = "confirm";
             this.signup.UseVisualStyleBackColor = true;
-            //this.signup.Click += new System.EventHandler(this.Signup_Click);
             // 
             // label1
             // 
@@ -193,7 +181,7 @@ namespace File_Transfer_2
             this.label1.Location = new System.Drawing.Point(107, 25);
             this.label1.Name = "label1";
             this.label1.ReadOnly = true;
-            this.label1.Size = new System.Drawing.Size(182, 20);
+            this.label1.Size = new System.Drawing.Size(182, 22);
             this.label1.TabIndex = 1;
             this.label1.Text = "Username:";
             // 
@@ -201,7 +189,7 @@ namespace File_Transfer_2
             // 
             this.input1.Location = new System.Drawing.Point(107, 48);
             this.input1.Name = "input1";
-            this.input1.Size = new System.Drawing.Size(182, 20);
+            this.input1.Size = new System.Drawing.Size(182, 22);
             this.input1.TabIndex = 0;
             // 
             // upload_timer
@@ -217,7 +205,6 @@ namespace File_Transfer_2
             // 
             this.backgroundWorker1.WorkerReportsProgress = true;
             this.backgroundWorker1.WorkerSupportsCancellation = true;
-            //this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker1_DoWork);
             // 
             // Form1
             // 
@@ -249,7 +236,6 @@ namespace File_Transfer_2
         private System.Windows.Forms.TabPage Main;
         private System.Windows.Forms.TextBox eta;
         private System.Windows.Forms.TextBox speed;
-        private System.Windows.Forms.Button ping;
         private System.Windows.Forms.CheckedListBox checkedListBox1;
         private System.Windows.Forms.Button sendbutton;
         private System.Windows.Forms.ProgressBar progressBar1;
