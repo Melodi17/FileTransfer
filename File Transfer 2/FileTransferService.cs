@@ -138,6 +138,9 @@ namespace File_Transfer_2
         }
         public static void Init(Form1 form1)
         {
+            ConnectionRequestAccept = new Dictionary<long, bool>();
+            ConnectionFileName = new Dictionary<long, string>();
+
             MainForm = form1;
             DownloadPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
             Server = new TCPConnectionServer(Port);
