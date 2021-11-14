@@ -17,21 +17,19 @@ namespace File_Transfer_2
         public string DataPath;
         public string Username;
         public string DownloadPath;
-        public string AllowedCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-";
+        public string AllowedCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-@";
 
         public Form1()
         {
             InitializeComponent();
-            LoadSettings();
-            Main_Progressbar.Hide();
-            
+
             string exeLocation = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
             /* This will get the exe location and find the path of the folder it is in. */
             
             DataPath = Path.Combine(exeLocation, "Data");
             /* This allows us to create a path in a neater way. */
 
-            Username = $"DefaultUser{new Random().Next(111, 999)}";
+            Username = $"{Environment.UserName}@{Environment.MachineName.ToLower()}";
             DownloadPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
             
             Directory.CreateDirectory(DataPath);
@@ -56,6 +54,8 @@ namespace File_Transfer_2
                 Username = Username_TextBox.Text;
                 DownloadPath = DownloadPath_TextBox.Text;
                 File.WriteAllText(settingsFile, $"Username = {Username}\nDownload Folder = {DownloadPath}");
+                MessageBox.Show("Your settings have been saved", "Saved", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
             }
             else
             {
@@ -116,6 +116,8 @@ namespace File_Transfer_2
             else
             {
                 File.WriteAllText(settingsFile, $"Username = {Username}\nDownload Folder = {DownloadPath}");
+                Username_TextBox.Text = Username;
+                DownloadPath_TextBox.Text = DownloadPath;
             }
         }
 

@@ -38,7 +38,6 @@ namespace File_Transfer_2
             this.Send_Button = new System.Windows.Forms.Button();
             this.Main_Progressbar = new System.Windows.Forms.ProgressBar();
             this.Settings_TabPage = new System.Windows.Forms.TabPage();
-            this.button1 = new System.Windows.Forms.Button();
             this.DownloadPath_TextBox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.TextBox();
             this.SignUp_Button = new System.Windows.Forms.Button();
@@ -125,7 +124,6 @@ namespace File_Transfer_2
             // 
             // Settings_TabPage
             // 
-            this.Settings_TabPage.Controls.Add(this.button1);
             this.Settings_TabPage.Controls.Add(this.DownloadPath_TextBox);
             this.Settings_TabPage.Controls.Add(this.label2);
             this.Settings_TabPage.Controls.Add(this.SignUp_Button);
@@ -139,20 +137,10 @@ namespace File_Transfer_2
             this.Settings_TabPage.Text = "Settings";
             this.Settings_TabPage.UseVisualStyleBackColor = true;
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(107, 155);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(182, 23);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "edit";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
             // DownloadPath_TextBox
             // 
             this.DownloadPath_TextBox.Location = new System.Drawing.Point(107, 132);
             this.DownloadPath_TextBox.Name = "DownloadPath_TextBox";
-            this.DownloadPath_TextBox.ReadOnly = true;
             this.DownloadPath_TextBox.Size = new System.Drawing.Size(419, 26);
             this.DownloadPath_TextBox.TabIndex = 4;
             // 
@@ -161,18 +149,19 @@ namespace File_Transfer_2
             this.label2.Enabled = false;
             this.label2.Location = new System.Drawing.Point(107, 108);
             this.label2.Name = "label2";
+            this.label2.ReadOnly = true;
             this.label2.Size = new System.Drawing.Size(182, 26);
             this.label2.TabIndex = 3;
-            this.label2.Text = "download location:";
+            this.label2.Text = "Download location:";
             // 
             // SignUp_Button
             // 
-            this.SignUp_Button.Location = new System.Drawing.Point(107, 230);
+            this.SignUp_Button.Location = new System.Drawing.Point(107, 228);
             this.SignUp_Button.Name = "SignUp_Button";
             this.SignUp_Button.Size = new System.Drawing.Size(182, 43);
             this.SignUp_Button.TabIndex = 2;
             this.SignUp_Button.TabStop = false;
-            this.SignUp_Button.Text = "confirm";
+            this.SignUp_Button.Text = "Save";
             this.SignUp_Button.UseVisualStyleBackColor = true;
             this.SignUp_Button.Click += new System.EventHandler(this.SignUp_Button_Click);
             // 
@@ -225,7 +214,6 @@ namespace File_Transfer_2
 
         private System.Windows.Forms.TabControl Main_TabControl;
         private System.Windows.Forms.TabPage Settings_TabPage;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox DownloadPath_TextBox;
         private System.Windows.Forms.TextBox label2;
         private System.Windows.Forms.Button SignUp_Button;

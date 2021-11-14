@@ -95,9 +95,10 @@ namespace File_Transfer_2
                     byte[][] fileContentSplit = SplitForSending(fileContent, TCPPacketCalculatedSize);
 
                     MainForm.Invoke(new Action(() =>
-                    { /* have you watched shangchi? No, not yet */
+                    {
                         MainForm.Main_Progressbar.Maximum = fileContentSplit.Length;
                         MainForm.Main_Progressbar.Value = 0;
+                        MainForm.Main_Progressbar.Visible = true;
                     }));
                     
                     foreach (string chunk in fileContentSplit.Select(Convert.ToBase64String))
@@ -112,7 +113,13 @@ namespace File_Transfer_2
                         Thread.Sleep(50);
                     }
 
-                    MainForm.Invoke(new Action(() => MainForm.Main_Progressbar.Value = MainForm.Main_Progressbar.Maximum));
+                    MainForm.Invoke(new Action(() =>
+                    {
+                        MainForm.Main_Progressbar.Value = MainForm.Main_Progressbar.Maximum;
+                        MainForm.Visible = false;
+                    }));
+                    
+                    MessageBox.Show("File was successfully transmitted to your destination(s)", "File share success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
