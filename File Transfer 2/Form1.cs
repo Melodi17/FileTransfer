@@ -93,7 +93,7 @@ namespace File_Transfer_2
                         input1.Text = Username;
                         //StartListening();
                     }
-                }
+                
             }
         }
     }
