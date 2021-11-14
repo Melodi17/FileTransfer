@@ -94,8 +94,12 @@ namespace File_Transfer_2
                     byte[] fileContent = File.ReadAllBytes(file);
                     byte[][] fileContentSplit = SplitForSending(fileContent, TCPPacketCalculatedSize);
 
-                    MainForm.progressBar1.Maximum = fileContentSplit.Length;
-                    MainForm.progressBar1.Value = 0;
+                    MainForm.Invoke(new Action(() =>
+                    { /* have you watched shangchi? */
+                        MainForm.progressBar1.Maximum = fileContentSplit.Length;
+                        MainForm.progressBar1.Value = 0;
+                    }));
+                 
                     
                     foreach (string chunk in fileContentSplit.Select(Convert.ToBase64String))
                         /* The select allows us to foreach the array really quickly do

@@ -31,6 +31,7 @@ namespace File_Transfer_2
         string ExeFilePath = System.Reflection.Assembly.GetEntryAssembly().Location;
         string ExeName = AppDomain.CurrentDomain.FriendlyName;
         SimpleTcpClient client;
+
         public Form1()
         {
             InitializeComponent();
