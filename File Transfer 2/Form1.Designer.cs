@@ -64,11 +64,11 @@ namespace File_Transfer_2
             // 
             // Main_TabPage
             // 
+            this.Main_TabPage.Controls.Add(this.Main_Progressbar);
             this.Main_TabPage.Controls.Add(this.Eta_TextBox);
             this.Main_TabPage.Controls.Add(this.Speed_TextBox);
             this.Main_TabPage.Controls.Add(this.DeviceSelection_ListBox);
             this.Main_TabPage.Controls.Add(this.Send_Button);
-            this.Main_TabPage.Controls.Add(this.Main_Progressbar);
             this.Main_TabPage.Location = new System.Drawing.Point(4, 29);
             this.Main_TabPage.Name = "Main_TabPage";
             this.Main_TabPage.Padding = new System.Windows.Forms.Padding(3);
@@ -105,19 +105,20 @@ namespace File_Transfer_2
             // 
             // Send_Button
             // 
-            this.Send_Button.Anchor = ((System.Windows.Forms.AnchorStyles) ((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.Send_Button.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte) (0)));
-            this.Send_Button.Location = new System.Drawing.Point(106, 129);
+            this.Send_Button.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.Send_Button.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Send_Button.Location = new System.Drawing.Point(106, 128);
             this.Send_Button.Name = "Send_Button";
             this.Send_Button.Size = new System.Drawing.Size(196, 37);
             this.Send_Button.TabIndex = 0;
-            this.Send_Button.Text = "send";
+            this.Send_Button.Text = "Send";
             this.Send_Button.UseVisualStyleBackColor = true;
             this.Send_Button.Click += new System.EventHandler(this.SendButton_Click);
             // 
             // Main_Progressbar
             // 
-            this.Main_Progressbar.Location = new System.Drawing.Point(40, 133);
+            this.Main_Progressbar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.Main_Progressbar.Location = new System.Drawing.Point(36, 128);
             this.Main_Progressbar.Name = "Main_Progressbar";
             this.Main_Progressbar.Size = new System.Drawing.Size(321, 37);
             this.Main_Progressbar.TabIndex = 4;
@@ -209,6 +210,7 @@ namespace File_Transfer_2
             this.Settings_TabPage.ResumeLayout(false);
             this.Settings_TabPage.PerformLayout();
             this.ResumeLayout(false);
+
         }
 
         #endregion
@@ -227,7 +229,7 @@ namespace File_Transfer_2
         private System.Windows.Forms.TextBox Eta_TextBox;
         private System.Windows.Forms.TextBox Speed_TextBox;
         public System.Windows.Forms.CheckedListBox DeviceSelection_ListBox;
-        private System.Windows.Forms.Button Send_Button;
+        public System.Windows.Forms.Button Send_Button;
         public System.Windows.Forms.ProgressBar Main_Progressbar;
         private System.ComponentModel.BackgroundWorker Main_BackgroundWorker;
     }

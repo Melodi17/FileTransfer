@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -106,6 +108,7 @@ namespace File_Transfer_2
                         MainForm.Main_Progressbar.Maximum = fileContentSplit.Length;
                         MainForm.Main_Progressbar.Value = 0;
                         MainForm.Main_Progressbar.Visible = true;
+                        MainForm.Send_Button.Visible = false;
                     }));
                     
                     foreach (string chunk in fileContentSplit.Select(Convert.ToBase64String))
@@ -116,14 +119,23 @@ namespace File_Transfer_2
                          * the conversion. */
                     {
                         client.Send(chunk);
-                        MainForm.Main_Progressbar.Value++;
+                        MainForm.Invoke(new Action(() => MainForm.Main_Progressbar.Value++ ));
                         Thread.Sleep(50);
                     }
+
+                    client.Send("~~~done~~~" + MD5ChecksumFile(file));
+                    /* Now we send this to make the server check if the file is corrupted. */
+
+                    Thread.Sleep(250);
+                    /* Give the server some time to recieve last message before disconnect. */
+
+                    client.Stop();
 
                     MainForm.Invoke(new Action(() =>
                     {
                         MainForm.Main_Progressbar.Value = MainForm.Main_Progressbar.Maximum;
-                        MainForm.Visible = false;
+                        MainForm.Main_Progressbar.Visible = false;
+                        MainForm.Send_Button.Visible = true;
                     }));
                     
                     MessageBox.Show("File was successfully transmitted to your destination(s)", "File share success", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -135,6 +147,16 @@ namespace File_Transfer_2
                 }
             };
             client.Start();
+        }
+        public static string MD5ChecksumFile(string filename)
+        {
+            using (var md5 = MD5.Create())
+            {
+                using (var stream = File.OpenRead(filename))
+                {
+                    return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "").ToLower();
+                }
+            }
         }
         public static void Init(Form1 form1)
         {
@@ -186,7 +208,31 @@ namespace File_Transfer_2
                          * set the filename to this message. If not, it will start building
                          * the file. */
                         {
-                            AppendAllBytes(Path.Combine(DownloadPath, ConnectionFileName[clientId]), Convert.FromBase64String(message));
+                            string flPath = Path.Combine(DownloadPath, ConnectionFileName[clientId]);
+                            if (message.StartsWith("~~~done~~~"))
+                            {
+                                string hash = message.Replace("~~~done~~~", "");
+                                string selfHash = MD5ChecksumFile(flPath);
+
+                                if (hash == selfHash)
+                                {
+                                    DialogResult res = MessageBox.Show("File was successfully recieved, would you like to open it?", "File share success", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                                    if (res == DialogResult.Yes)
+                                    {
+                                        Process.Start("explorer.exe", flPath);
+                                    }
+                                }
+                                else
+                                {
+                                    DialogResult res = MessageBox.Show("The recieved file was corrupted, would you like to delete it?", "File sharing corrupted", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                                    if (res == DialogResult.Yes)
+                                    {
+                                        File.Delete(flPath);
+                                    }
+                                }
+                            }
+
+                            AppendAllBytes(flPath, Convert.FromBase64String(message));
                             /* Base 64 strings allow us to store bytes without loosing any data in
                              * the conversion. */
                         }

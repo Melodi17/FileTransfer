@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace Melodi.Networking
 {
@@ -47,7 +48,7 @@ namespace Melodi.Networking
                             HandleConnect(client);
                         }
                     }
-                    catch (Exception e) { /* Don't Care */Console.WriteLine(e); }
+                    catch (Exception e) { /* Don't Care */ }
                 }
             });
             _t.Start();
@@ -89,7 +90,7 @@ namespace Melodi.Networking
                         if (!client.Client.IsConnected() || response == null) { break; }
                         HandleMessage(client, response);
                     }
-                    catch (Exception) { break; }
+                    catch (Exception e) { break; }
                 }
                 if (Running)
                 {
