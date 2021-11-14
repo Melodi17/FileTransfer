@@ -31,6 +31,9 @@ namespace File_Transfer_2
          * the long is basically just a number that can have a really high value
          * higher than an int, but it can only have positive numbers and 0. */
         public static Dictionary<long, string> ConnectionFileName;
+        public static Dictionary<string, string> KnownDevices;
+        /* The key is the device 'friendly name' the value is the IP. This is so
+         * we can talk to it from the listbox. */
         public static byte[][] SplitForSending(byte[] buffer, int blockSize)
         {
             byte[][] blocks = new byte[(buffer.Length + blockSize - 1) / blockSize][];
@@ -53,6 +56,10 @@ namespace File_Transfer_2
         public static void Discover()
         {
             // TODO: Implement this method/function
+            KnownDevices = new Dictionary<string, string>();
+            
+            KnownDevices["self"] = "localhost";
+            MainForm.DeviceSelection_ListBox.Items.Add("self");
         }
         public static void Send(string destination, string file)
         {

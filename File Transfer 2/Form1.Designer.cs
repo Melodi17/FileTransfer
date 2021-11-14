@@ -113,7 +113,7 @@ namespace File_Transfer_2
             this.Send_Button.TabIndex = 0;
             this.Send_Button.Text = "send";
             this.Send_Button.UseVisualStyleBackColor = true;
-            this.Send_Button.Click += new System.EventHandler(this.sendbutton_Click);
+            this.Send_Button.Click += new System.EventHandler(this.SendButton_Click);
             // 
             // Main_Progressbar
             // 
@@ -121,6 +121,7 @@ namespace File_Transfer_2
             this.Main_Progressbar.Name = "Main_Progressbar";
             this.Main_Progressbar.Size = new System.Drawing.Size(321, 37);
             this.Main_Progressbar.TabIndex = 4;
+            this.Main_Progressbar.Visible = false;
             // 
             // Settings_TabPage
             // 
@@ -225,7 +226,7 @@ namespace File_Transfer_2
         private System.Windows.Forms.TabPage Main_TabPage;
         private System.Windows.Forms.TextBox Eta_TextBox;
         private System.Windows.Forms.TextBox Speed_TextBox;
-        private System.Windows.Forms.CheckedListBox DeviceSelection_ListBox;
+        public System.Windows.Forms.CheckedListBox DeviceSelection_ListBox;
         private System.Windows.Forms.Button Send_Button;
         public System.Windows.Forms.ProgressBar Main_Progressbar;
         private System.ComponentModel.BackgroundWorker Main_BackgroundWorker;
