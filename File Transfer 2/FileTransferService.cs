@@ -96,8 +96,8 @@ namespace File_Transfer_2
 
                     MainForm.Invoke(new Action(() =>
                     { /* have you watched shangchi? No, not yet */
-                        MainForm.progressBar1.Maximum = fileContentSplit.Length;
-                        MainForm.progressBar1.Value = 0;
+                        MainForm.Main_Progressbar.Maximum = fileContentSplit.Length;
+                        MainForm.Main_Progressbar.Value = 0;
                     }));
                     
                     foreach (string chunk in fileContentSplit.Select(Convert.ToBase64String))
@@ -108,11 +108,11 @@ namespace File_Transfer_2
                          * the conversion. */
                     {
                         client.Send(chunk);
-                        MainForm.progressBar1.Value++;
+                        MainForm.Main_Progressbar.Value++;
                         Thread.Sleep(50);
                     }
 
-                    MainForm.Invoke(new Action(() => MainForm.progressBar1.Value = MainForm.progressBar1.Maximum));
+                    MainForm.Invoke(new Action(() => MainForm.Main_Progressbar.Value = MainForm.Main_Progressbar.Maximum));
                 }
                 else
                 {

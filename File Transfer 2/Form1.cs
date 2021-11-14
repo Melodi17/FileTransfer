@@ -1,5 +1,5 @@
-﻿using SimpleTCP;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -9,92 +9,113 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+
 namespace File_Transfer_2
 {
     public partial class Form1 : Form
     {
-        const int byteport = 5000;
-        const int infoport = 5001;
-        string Username = "";
-        string downloadfolder = "";
-        string path = "";
-        byte[] receivedbytes = new byte[0];
-        Stopwatch stopwatch = new Stopwatch();
-        string sendername = "";
-        string senderip = "";
-        string downloadingfilename = "";
-        int byteslastsec = 0;
-        int laststamped = 0;
-        int filesize = 0;
-        private readonly UdpClient udp2 = new UdpClient(infoport);
-        IAsyncResult ar_2 = null;
-        string ExeFilePath = System.Reflection.Assembly.GetEntryAssembly().Location;
-        string ExeName = AppDomain.CurrentDomain.FriendlyName;
-        bool Authenticated = false;
-
-        SimpleTcpClient client;
+        public string DataPath;
+        public string Username;
+        public string DownloadPath;
+        public string AllowedCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-";
 
         public Form1()
         {
             InitializeComponent();
-            Authenticate();
-            progressBar1.Hide();
+            LoadSettings();
+            Main_Progressbar.Hide();
+            
+            string exeLocation = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+            /* This will get the exe location and find the path of the folder it is in. */
+            
+            DataPath = Path.Combine(exeLocation, "Data");
+            /* This allows us to create a path in a neater way. */
+
+            Username = $"DefaultUser{new Random().Next(111, 999)}";
+            DownloadPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+            
+            Directory.CreateDirectory(DataPath);
+            /* If it already exists, the code will automatically
+             * ignore it. */
         }
 
-        private void SetUpConfig()
+        private Dictionary<string, string> ReadConfig(string file)
         {
-            //find out where the exe is located, so we can create, delete folders as needed
+            string[] content = File.ReadAllLines(file);
+            return content.ToDictionary(x => x.Split('=')[0].Trim(), x => x.Split('=').Length > 1 ? x.Split('=')[1].Trim() : "");
+            /* Converts a=b to a dictionary. Don't worry its complicated for me as well. */
+        }
 
-            //this function is called if the config file does not exist.
-            if (Directory.Exists(path + "\\Data"))
+        private void SaveSettings()
+        {
+            string settingsFile = Path.Combine(DataPath, "settings.config");
+            if (Username_TextBox.Text.All(x => AllowedCharacters.Contains(x)) && Directory.Exists(DownloadPath_TextBox.Text))
+                /* Makes sure all letters in username are allowed characters and that the download
+                 * folder does actually exist. */
             {
-                Directory.Delete(path + "\\Data");
+                Username = Username_TextBox.Text;
+                DownloadPath = DownloadPath_TextBox.Text;
+                File.WriteAllText(settingsFile, $"Username = {Username}\nDownload Folder = {DownloadPath}");
             }
-            Directory.CreateDirectory(path + "\\Data");
-            File.Create(path + "\\Data\\settings.config").Dispose();
-        }
-        private void Authenticate()
-        {
-            //we are checking if they have a username and file saving folder.
-            //path inside exe's folder, cant have this as global var as apparently nonstatic variables arent allowed :(
-            string path = ExeFilePath.Replace(ExeName, "");
-            string allowed_charachters = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890";
-            if (File.Exists(path + "\\Data\\settings.config"))
+            else
             {
-                File.WriteAllText(path + "\\Data\\settings.config", "Username = \nDownload Folder = ");
-                string[] contents = File.ReadAllLines(path + "\\Data\\settings.config");
-                Username = contents[0].Replace("Username = ", "");
-                downloadfolder = contents[1].Replace("Download Folder = ", "");
-                if (Directory.Exists(downloadfolder))
+                DialogResult result = MessageBox.Show(
+                    "Your config files have some issues that need to be\nfixed, would you like to reset them?", "Config File Errors", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                if (result == DialogResult.Yes)
                 {
-                    DownloadPath.Text = downloadfolder;
+                    File.WriteAllText(settingsFile, $"Username = {Username}\nDownload Folder = {DownloadPath}");
+                    Username_TextBox.Text = Username;
+                    DownloadPath_TextBox.Text = DownloadPath;
                 }
                 else
                 {
-                    DownloadPath.Text = System.Environment.ExpandEnvironmentVariables("%userprofile%\\downloads\\");
-                    downloadfolder = System.Environment.ExpandEnvironmentVariables("%userprofile%\\downloads\\");
+                    Main_TabPage.Visible = false;
+                    Main_TabControl.SelectedTab = Settings_TabPage;
                 }
-                foreach (char letter in Username)
+            }
+        }
+        private void LoadSettings()
+        {
+            string settingsFile = Path.Combine(DataPath, "settings.config");
+            if (File.Exists(settingsFile))
+            {
+                Dictionary<string, string> config = ReadConfig(settingsFile);
+                if (config.ContainsKey("Username") && config.ContainsKey("Download Folder"))
                 {
-                    if (!allowed_charachters.Contains(letter))
+                    if (config["Username"].All(x => AllowedCharacters.Contains(x)) && Directory.Exists(config["Download Folder"]))
+                        /* Makes sure all letters in username are allowed characters and that the download
+                         * folder does actually exist. */
                     {
-                        MessageBox.Show("Username Contains charachters that are not allowed.\nUsernames can only contain Capital letters, Lowercase letters, and numbers.\n Remove the disallowed charachters in your username and press confirm.");
-                        tabControl1.TabPages.Remove(Main);
-                        //force user to change their username to something allowed else they cant use application
+                        Username = config["Username"];
+                        DownloadPath = config["Download Folder"];
+                        
+                        Username_TextBox.Text = Username;
+                        DownloadPath_TextBox.Text = DownloadPath;
                     }
                     else
                     {
-                        if (tabControl1.TabCount == 1)
-                        {
-                            tabControl1.TabPages.Insert(0, Main);
-                        }
-                        //let them use the app, switch to main tab.
-                        tabControl1.SelectedIndex = 0;
-                        input1.Text = Username;
-                        //StartListening();
-                    }
+                        DialogResult result = MessageBox.Show(
+                            "Your config files have some issues that need to be\nfixed, would you like to reset them?", "Config File Errors", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
+                        if (result == DialogResult.Yes)
+                        {
+                            File.WriteAllText(settingsFile, $"Username = {Username}\nDownload Folder = {DownloadPath}");
+                            
+                            Username_TextBox.Text = Username;
+                            DownloadPath_TextBox.Text = DownloadPath;
+                        }
+                        else
+                        {
+                            Main_TabPage.Visible = false;
+                            Main_TabControl.SelectedTab = Settings_TabPage;
+                        }
+                    }
                 }
+            }
+            else
+            {
+                File.WriteAllText(settingsFile, $"Username = {Username}\nDownload Folder = {DownloadPath}");
             }
         }
 
@@ -513,13 +534,19 @@ namespace File_Transfer_2
             }
             else
             {
-                MessageBox.Show("No file was selected", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("No file was selected", "File missing", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             FileTransferService.Init(this);
+            LoadSettings();
+        }
+
+        private void SignUp_Button_Click(object sender, EventArgs e)
+        {
+            SaveSettings();
         }
     }
 }
