@@ -531,7 +531,7 @@ namespace File_Transfer_2
                 {
                     Thread.CurrentThread.IsBackground = true;
 
-                    FileTransferService.Send(FileTransferService.KnownDevices[DeviceSelection_ListBox.CheckedItems[0].ToString()], dialog.FileName);
+                    FileTransferService.Send(FileTransferService.KnownDevices[DeviceSelection_ListBox.CheckedItems[0].ToString()].Item1, dialog.FileName);
                 }).Start();
             }
             else
@@ -543,8 +543,8 @@ namespace File_Transfer_2
         private void Form1_Load(object sender, EventArgs e)
         {
             FileTransferService.Init(this);
-            FileTransferService.Discover();
             LoadSettings();
+            FileTransferService.Discover();
         }
 
         private void SignUp_Button_Click(object sender, EventArgs e)

@@ -58,6 +58,7 @@
     <Compile Include="SocketExtensions.cs" />
     <Compile Include="TCPConnectionClient.cs" />
     <Compile Include="TCPConnectionServer.cs" />
+    <Compile Include="UDPConnection.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
