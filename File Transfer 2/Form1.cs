@@ -15,7 +15,7 @@ namespace File_Transfer_2
     {
         const int byteport = 5000;
         const int infoport = 5001;
-        string username = "";
+        string Username = "";
         string downloadfolder = "";
         string path = "";
         byte[] receivedbytes = new byte[0];
@@ -30,19 +30,20 @@ namespace File_Transfer_2
         IAsyncResult ar_2 = null;
         string ExeFilePath = System.Reflection.Assembly.GetEntryAssembly().Location;
         string ExeName = AppDomain.CurrentDomain.FriendlyName;
+        bool Authenticated = false;
         SimpleTcpClient client;
 
         public Form1()
         {
             InitializeComponent();
-            //Authenticate();
+            Authenticate();
             progressBar1.Hide();
         }
 
         private void SetUpConfig()
         {
             //find out where the exe is located, so we can create, delete folders as needed
-            string path = ExeFilePath.Replace(ExeName, "");
+
             //this function is called if the config file does not exist.
             if (Directory.Exists(path + "\\Data"))
             {
@@ -50,6 +51,20 @@ namespace File_Transfer_2
             }
             Directory.CreateDirectory(path + "\\Data");
             File.Create(path + "\\Data\\settings.config").Dispose();
+        }
+        private void Authenticate()
+        {
+            //we are checking if they have a username and file saving folder.
+            //path inside exe's folder, cant have this as global var as apparently nonstatic variables arent allowed :(
+            string path = ExeFilePath.Replace(ExeName, "");
+            if (File.Exists(path + "\\Data\\settings.config"))
+            {
+                File.WriteAllText(path + "\\Data\\settings.config", "Username = \nDownload Folder = ");
+                string[] contents = File.ReadAllLines(path + "\\Data\\settings.config");
+                Username = contents[0].Replace("Username = ", "");
+                downloadfolder = contents[1].Replace("Download Folder = ", "");
+                
+            }
         }
 
 
