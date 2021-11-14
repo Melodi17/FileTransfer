@@ -94,9 +94,12 @@ namespace File_Transfer_2
                     byte[] fileContent = File.ReadAllBytes(file);
                     byte[][] fileContentSplit = SplitForSending(fileContent, TCPPacketCalculatedSize);
 
-                    MainForm.progressBar1.Maximum = fileContentSplit.Length;
-                    MainForm.progressBar1.Value = 0;
-                    
+                    MainForm.Invoke(new Action(() =>
+                    {
+                        MainForm.progressBar1.Maximum = fileContentSplit.Length;
+                        MainForm.progressBar1.Value = 0;
+                    }));
+
                     foreach (string chunk in fileContentSplit.Select(Convert.ToBase64String))
                         /* The select allows us to foreach the array really quickly do
                          * something to each part of it. In this case I am converting
@@ -108,8 +111,8 @@ namespace File_Transfer_2
                         MainForm.progressBar1.Value++;
                         Thread.Sleep(50);
                     }
-                    
-                    MainForm.progressBar1.Value = MainForm.progressBar1.Maximum;
+
+                    MainForm.Invoke(new Action(() => MainForm.progressBar1.Value = MainForm.progressBar1.Maximum));
                 }
                 else
                 {
