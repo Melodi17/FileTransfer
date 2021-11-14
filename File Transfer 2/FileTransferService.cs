@@ -95,7 +95,7 @@ namespace File_Transfer_2
                     byte[][] fileContentSplit = SplitForSending(fileContent, TCPPacketCalculatedSize);
 
                     MainForm.Invoke(new Action(() =>
-                        { /* have you watched shangchi? No, not yet */
+                    { /* have you watched shangchi? No, not yet */
                         MainForm.progressBar1.Maximum = fileContentSplit.Length;
                         MainForm.progressBar1.Value = 0;
                     }));
