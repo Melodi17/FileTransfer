@@ -95,20 +95,11 @@ namespace File_Transfer_2
                     byte[][] fileContentSplit = SplitForSending(fileContent, TCPPacketCalculatedSize);
 
                     MainForm.Invoke(new Action(() =>
-<<<<<<< HEAD
-                    { /* have you watched shangchi? */
+                        { /* have you watched shangchi? No, not yet */
                         MainForm.progressBar1.Maximum = fileContentSplit.Length;
                         MainForm.progressBar1.Value = 0;
                     }));
-                 
                     
-=======
-                    {
-                        MainForm.progressBar1.Maximum = fileContentSplit.Length;
-                        MainForm.progressBar1.Value = 0;
-                    }));
-
->>>>>>> ab06d03494fa3f668d3fb39cdf3541279ffb734d
                     foreach (string chunk in fileContentSplit.Select(Convert.ToBase64String))
                         /* The select allows us to foreach the array really quickly do
                          * something to each part of it. In this case I am converting
