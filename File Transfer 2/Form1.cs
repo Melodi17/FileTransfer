@@ -39,6 +39,20 @@ namespace File_Transfer_2
             progressBar1.Hide();
         }
 
+        private void SetUpConfig()
+        {
+            //find out where the exe is located, so we can create, delete folders as needed
+            string path = ExeFilePath.Replace(ExeName, "");
+            //this function is called if the config file does not exist.
+            if (Directory.Exists(path + "\\Data"))
+            {
+                Directory.Delete(path + "\\Data");
+            }
+            Directory.CreateDirectory(path + "\\Data");
+            File.Create(path + "\\Data\\settings.config").Dispose();
+        }
+
+
         // Code to fix below
         #region Old Code
         //private void Authenticate()
@@ -459,7 +473,7 @@ namespace File_Transfer_2
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            FileTransferService.Init(this);   
+            FileTransferService.Init(this);
         }
     }
 }
