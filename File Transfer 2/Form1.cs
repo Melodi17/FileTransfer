@@ -15,6 +15,7 @@ namespace File_Transfer_2
     public partial class Form1 : Form
     {
         public string DataPath;
+        public bool Discoverable;
         public string Username;
         public string DownloadPath;
         public string AllowedCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-@";
@@ -25,12 +26,13 @@ namespace File_Transfer_2
 
             string exeLocation = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
             /* This will get the exe location and find the path of the folder it is in. */
-            
+
             DataPath = Path.Combine(exeLocation, "Data");
             /* This allows us to create a path in a neater way. */
 
-            Username = $"{Environment.UserName}@{Environment.MachineName.ToLower()}";
+            Username = $"{Environment.UserName}";
             DownloadPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+            Discoverable = true;
             
             Directory.CreateDirectory(DataPath);
             /* If it already exists, the code will automatically
@@ -40,33 +42,38 @@ namespace File_Transfer_2
         private Dictionary<string, string> ReadConfig(string file)
         {
             string[] content = File.ReadAllLines(file);
-            return content.ToDictionary(x => x.Split('=')[0].Trim(), x => x.Split('=').Length > 1 ? x.Split('=')[1].Trim() : "");
+            return content.ToDictionary(x => x.Split('=')[0].Trim(),
+                x => x.Split('=').Length > 1 ? x.Split('=')[1].Trim() : "");
             /* Converts a=b to a dictionary. Don't worry its complicated for me as well. */
         }
 
         private void SaveSettings()
         {
             string settingsFile = Path.Combine(DataPath, "settings.config");
-            if (Username_TextBox.Text.All(x => AllowedCharacters.Contains(x)) && Directory.Exists(DownloadPath_TextBox.Text))
+            if (Username_TextBox.Text.All(x => AllowedCharacters.Contains(x)) &&
+                Directory.Exists(DownloadPath_TextBox.Text))
                 /* Makes sure all letters in username are allowed characters and that the download
                  * folder does actually exist. */
             {
                 Username = Username_TextBox.Text;
                 DownloadPath = DownloadPath_TextBox.Text;
-                File.WriteAllText(settingsFile, $"Username = {Username}\nDownload Folder = {DownloadPath}");
+                Discoverable = Discoverable_CheckBox.Checked;
+                File.WriteAllText(settingsFile, $"Username = {Username}\nDownload Folder = {DownloadPath}\nDiscoverable = {Discoverable}");
                 MessageBox.Show("Your settings have been saved", "Saved", MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             }
             else
             {
                 DialogResult result = MessageBox.Show(
-                    "Your config files have some issues that need to be\nfixed, would you like to reset them?", "Config File Errors", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    "Your config files have some issues that need to be\nfixed, would you like to reset them?",
+                    "Config File Errors", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
                 if (result == DialogResult.Yes)
                 {
-                    File.WriteAllText(settingsFile, $"Username = {Username}\nDownload Folder = {DownloadPath}");
+                    File.WriteAllText(settingsFile, $"Username = {Username}\nDownload Folder = {DownloadPath}\nDiscoverable = {Discoverable}");
                     Username_TextBox.Text = Username;
                     DownloadPath_TextBox.Text = DownloadPath;
+                    Discoverable_CheckBox.Checked = Discoverable;
                 }
                 else
                 {
@@ -81,29 +88,34 @@ namespace File_Transfer_2
             if (File.Exists(settingsFile))
             {
                 Dictionary<string, string> config = ReadConfig(settingsFile);
-                if (config.ContainsKey("Username") && config.ContainsKey("Download Folder"))
+                if (config.ContainsKey("Username") && config.ContainsKey("Download Folder") && config.ContainsKey("Discoverable"))
                 {
-                    if (config["Username"].All(x => AllowedCharacters.Contains(x)) && Directory.Exists(config["Download Folder"]))
+                    if (config["Username"].All(x => AllowedCharacters.Contains(x)) &&
+                        Directory.Exists(config["Download Folder"]))
                         /* Makes sure all letters in username are allowed characters and that the download
                          * folder does actually exist. */
                     {
                         Username = config["Username"];
                         DownloadPath = config["Download Folder"];
-                        
+                        Discoverable = config["Discoverable"].ToLower() == "true";
+
                         Username_TextBox.Text = Username;
                         DownloadPath_TextBox.Text = DownloadPath;
+                        Discoverable_CheckBox.Checked = Discoverable;
                     }
                     else
                     {
                         DialogResult result = MessageBox.Show(
-                            "Your config files have some issues that need to be\nfixed, would you like to reset them?", "Config File Errors", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                            "Your config files have some issues that need to be\nfixed, would you like to reset them?",
+                            "Config File Errors", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
                         if (result == DialogResult.Yes)
                         {
-                            File.WriteAllText(settingsFile, $"Username = {Username}\nDownload Folder = {DownloadPath}");
-                            
+                            File.WriteAllText(settingsFile, $"Username = {Username}\nDownload Folder = {DownloadPath}\nDiscoverable = {Discoverable}");
+
                             Username_TextBox.Text = Username;
                             DownloadPath_TextBox.Text = DownloadPath;
+                            Discoverable_CheckBox.Checked = Discoverable;
                         }
                         else
                         {
@@ -118,12 +130,15 @@ namespace File_Transfer_2
                 File.WriteAllText(settingsFile, $"Username = {Username}\nDownload Folder = {DownloadPath}");
                 Username_TextBox.Text = Username;
                 DownloadPath_TextBox.Text = DownloadPath;
+                Discoverable_CheckBox.Checked = Discoverable;
             }
         }
 
 
         // Code to fix below
+
         #region Old Code
+
         //private void Authenticate()
         //{
         //    string path = ExeFilePath.Replace(ExeName, "");
@@ -519,25 +534,34 @@ namespace File_Transfer_2
         //{
         //    Sendtext("~ping");
         //}
+
         #endregion
 
         private void SendButton_Click(object sender, EventArgs e)
         {
+            if (DeviceSelection_ListBox.CheckedItems.Count == 0)
+            {
+                MessageBox.Show("No device was selected", "Selection missing", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.ShowDialog();
-            if (dialog.FileName != null)
-            {
-                new Thread(() =>
-                {
-                    Thread.CurrentThread.IsBackground = true;
-
-                    FileTransferService.Send(FileTransferService.KnownDevices[DeviceSelection_ListBox.CheckedItems[0].ToString()].Item1, dialog.FileName);
-                }).Start();
-            }
-            else
+            if (dialog.FileName == null)
             {
                 MessageBox.Show("No file was selected", "File missing", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
             }
+
+            new Thread(() =>
+            {
+                Thread.CurrentThread.IsBackground = true;
+
+                FileTransferService.Send(
+                    FileTransferService.KnownDevices[DeviceSelection_ListBox.CheckedItems[0].ToString()].Item1,
+                    dialog.FileName);
+            }).Start();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -550,6 +574,11 @@ namespace File_Transfer_2
         private void SignUp_Button_Click(object sender, EventArgs e)
         {
             SaveSettings();
+        }
+
+        private void Close_Button_Click(object sender, EventArgs e)
+        {
+            Environment.Exit(0);
         }
     }
 }

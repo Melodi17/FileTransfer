@@ -24,6 +24,7 @@ namespace File_Transfer_2
          * It returns the result every time it is mentioned so it can change over time.
          * When the variables in it change. */
         public static string DownloadPath => MainForm.DownloadPath;
+        public static bool Discoverable => MainForm.Discoverable;
         public static TCPConnectionServer Server;
         /* Only 'local' variables start with a lower-case letter, these are global because
          * they can be accessed anywhere in the code. Local variables are like the stuff
@@ -58,7 +59,6 @@ namespace File_Transfer_2
         }
         public static void Discover()
         {
-            // TODO: Implement this method/function
             KnownDevices = new Dictionary<string, (string, DateTime)>();
 
             new Thread(() =>
@@ -88,8 +88,27 @@ namespace File_Transfer_2
                 connection.Start();
                 while (true)
                 {
-                    connection.Send(MainForm.Username);
-                    Thread.Sleep(1000 * 3);
+                    if (Discoverable)
+                    {
+                        connection.Send(MainForm.Username);
+                        Thread.Sleep(1000 * 3);   
+                    }
+                    else
+                    {
+                        lock (KnownDevices)
+                        {
+                            foreach (var item in KnownDevices.ToArray())
+                            {
+                                if (item.Value.Item2.AddSeconds(5) < DateTime.Now)
+                                {
+                                    MainForm.Invoke(new Action(() => MainForm.DeviceSelection_ListBox.Items.Remove(item.Key)));
+                                    KnownDevices.Remove(item.Key);
+                                }
+                            }
+                        }
+                        Thread.Sleep(1000 * 3);
+                    }
+                    MainForm.Invoke(new Action(() => MainForm.NoDevices_Label.Visible = KnownDevices.Count == 0));
                 }
             }).Start();
         }
@@ -225,6 +244,14 @@ namespace File_Transfer_2
                     Server.Send(client, "Accepted");
                     ConnectionRequestAccept[client.SocketId()] = true;
                     /* Get ready for download bytes */
+
+                    //MainForm.Invoke(new Action(() =>
+                    //{
+                    //    MainForm.Main_Progressbar.Value = MainForm.Main_Progressbar.Maximum;
+                    //    MainForm.Main_Progressbar.Visible = true;
+                    //    MainForm.Main_Progressbar.Style = ProgressBarStyle.Marquee;
+                    //    MainForm.Send_Button.Visible = false;
+                    //}));
                 }
                 else
                 {
@@ -240,6 +267,14 @@ namespace File_Transfer_2
 
                 if (ConnectionRequestAccept.ContainsKey(clientId)) ConnectionRequestAccept.Remove(clientId);
                 if (ConnectionFileName.ContainsKey(clientId)) ConnectionFileName.Remove(clientId);
+
+                //MainForm.Invoke(new Action(() =>
+                //{
+                //    MainForm.Main_Progressbar.Value = MainForm.Main_Progressbar.Maximum;
+                //    MainForm.Main_Progressbar.Visible = false;
+                //    MainForm.Main_Progressbar.Style = ProgressBarStyle.Blocks;
+                //    MainForm.Send_Button.Visible = true;
+                //}));
             };
             Server.onMessage = (client, message) =>
             {
@@ -257,6 +292,14 @@ namespace File_Transfer_2
                             string flPath = Path.Combine(DownloadPath, ConnectionFileName[clientId]);
                             if (message.StartsWith("~~~done~~~"))
                             {
+                                //MainForm.Invoke(new Action(() =>
+                                //{
+                                //    MainForm.Main_Progressbar.Value = MainForm.Main_Progressbar.Maximum;
+                                //    MainForm.Main_Progressbar.Visible = false;
+                                //    MainForm.Main_Progressbar.Style = ProgressBarStyle.Blocks;
+                                //    MainForm.Send_Button.Visible = true;
+                                //}));
+
                                 string hash = message.Replace("~~~done~~~", "");
                                 string selfHash = MD5ChecksumFile(flPath);
 
