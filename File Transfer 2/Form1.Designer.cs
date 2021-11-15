@@ -260,7 +260,7 @@ namespace File_Transfer_2
             this.Close_Button.Name = "Close_Button";
             this.Close_Button.Size = new System.Drawing.Size(130, 25);
             this.Close_Button.TabIndex = 13;
-            this.Close_Button.Text = "Close";
+            this.Close_Button.Text = "Quit";
             this.Close_Button.UseVisualStyleBackColor = true;
             this.Close_Button.Click += new System.EventHandler(this.Close_Button_Click);
             // 
