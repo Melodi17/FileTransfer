@@ -19,6 +19,7 @@ namespace File_Transfer_2
         public string Username;
         public string DownloadPath;
         public string AllowedCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-@";
+        public int FileSize = 0;
 
         public Form1()
         {

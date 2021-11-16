@@ -150,12 +150,15 @@ namespace File_Transfer_2
                 }
                 else if (message == "Accepted")
                 {
+                    FileInfo FileInfo = new FileInfo(file);
                     string flName = Path.GetFileName(file);
+                    long filesize = FileInfo.Length;
+                   // int filesize = Path.GetFile
                     /* This will only get the file name like this
                      * we give it C:\users\melod\Documents\test.txt
                      * and it returns test.txt this is so the other side
                      * will know what type of file it is. */
-                    client.Send(flName);
+                    client.Send(flName + "|" + filesize);
                     /* This tells the server what the file is called */
 
                     Thread.Sleep(1000);
@@ -225,6 +228,7 @@ namespace File_Transfer_2
         {
             ConnectionRequestAccept = new Dictionary<long, bool>();
             ConnectionFileName = new Dictionary<long, string>();
+            long FileSize = 0;
 
             MainForm = form1;
             //DownloadPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
@@ -327,7 +331,9 @@ namespace File_Transfer_2
                         }
                         else
                         {
-                            ConnectionFileName[clientId] = message;
+                            ConnectionFileName[clientId] = message.Split('|')[0];
+                            FileSize = long.Parse(message.Split('|')[1]);
+                            MessageBox.Show("The file size was passed over and it is: " + FileSize.ToString());
                             File.WriteAllText(Path.Combine(DownloadPath, ConnectionFileName[clientId]), "");
                             /* Generate empty file */
                         }
