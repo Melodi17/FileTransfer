@@ -339,7 +339,7 @@ namespace File_Transfer_2
                         {
                             ConnectionFileName[clientId] = message.Split('|')[0];
                             FileSize = long.Parse(message.Split('|')[1]);
-                            MessageBox.Show("The file size was passed over and it is: " + FileSize.ToString());
+                            MessageBox.Show($"The file is {FileSize / 1024}mb in size", "File size", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             File.WriteAllText(Path.Combine(DownloadPath, ConnectionFileName[clientId]), "");
                             /* Generate empty file */
                         }
