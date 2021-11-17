@@ -75,7 +75,7 @@ namespace File_Transfer_2
                             if (item.Value.Item2.AddSeconds(5) < DateTime.Now)
                             {
                                 MainForm.Invoke(new Action(() => MainForm.DeviceSelection_ListBox.Items.Remove(item.Key)));
-                                KnownDevices.Remove(item.Key);   
+                                KnownDevices.Remove(item.Key);
                             }
                         }
                         if (!KnownDevices.ContainsKey(message))
@@ -91,7 +91,7 @@ namespace File_Transfer_2
                     if (Discoverable)
                     {
                         connection.Send(MainForm.Username);
-                        Thread.Sleep(1000 * 3);   
+                        Thread.Sleep(1000 * 3);
                     }
                     else
                     {
@@ -153,7 +153,7 @@ namespace File_Transfer_2
                     FileInfo FileInfo = new FileInfo(file);
                     string flName = Path.GetFileName(file);
                     long filesize = FileInfo.Length;
-                   // int filesize = Path.GetFile
+                    // int filesize = Path.GetFile
                     /* This will only get the file name like this
                      * we give it C:\users\melod\Documents\test.txt
                      * and it returns test.txt this is so the other side
@@ -171,7 +171,7 @@ namespace File_Transfer_2
 
                     MainForm.Invoke(new Action(() =>
                     {
-                        
+
                         MainForm.Main_Progressbar.Maximum = fileContentSplit.Length;
                         MainForm.Main_Progressbar.Value = 0;
                         MainForm.Main_Progressbar.Visible = true;
@@ -223,6 +223,43 @@ namespace File_Transfer_2
                 {
                     return BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "").ToLower();
                 }
+            }
+        }
+
+        public static string ToFileSize(this double value)
+        {
+            string[] suffixes = { "bytes", "KB", "MB", "GB",
+        "TB", "PB", "EB", "ZB", "YB"};
+            for (int i = 0; i < suffixes.Length; i++)
+            {
+                if (value <= (Math.Pow(1024, i + 1)))
+                {
+                    return ThreeNonZeroDigits(value /
+                        Math.Pow(1024, i)) +
+                        " " + suffixes[i];
+                }
+            }
+
+            return ThreeNonZeroDigits(value /
+                Math.Pow(1024, suffixes.Length - 1)) +
+                " " + suffixes[suffixes.Length - 1];
+        }
+        private static string ThreeNonZeroDigits(double value)
+        {
+            if (value >= 100)
+            {
+                // No digits after the decimal.
+                return value.ToString("0,0");
+            }
+            else if (value >= 10)
+            {
+                // One digit after the decimal.
+                return value.ToString("0.0");
+            }
+            else
+            {
+                // Two digits after the decimal.
+                return value.ToString("0.00");
             }
         }
         public static void Init(Form1 form1)
@@ -329,16 +366,19 @@ namespace File_Transfer_2
                             AppendAllBytes(flPath, message_bytes);
                             MainForm.Invoke(new Action(() =>
                             {
-                                MainForm.EstimatedTimeLeft.Text = message_bytes.Length.ToString();
+                                MainForm.EstimatedTimeLeft.Text = ToFileSize(message_bytes.Length);
                             }));
 
-                                /* Base 64 strings allow us to store bytes without loosing any data in
-                                 * the conversion. */
-                            }
+                            /* Base 64 strings allow us to store bytes without loosing any data in
+                             * the conversion. */
+                        }
                         else
                         {
                             ConnectionFileName[clientId] = message.Split('|')[0];
                             FileSize = long.Parse(message.Split('|')[1]);
+
+
+
                             MessageBox.Show($"The file is {FileSize / 1024}mb in size", "File size", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             File.WriteAllText(Path.Combine(DownloadPath, ConnectionFileName[clientId]), "");
                             /* Generate empty file */
