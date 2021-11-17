@@ -171,6 +171,7 @@ namespace File_Transfer_2
 
                     MainForm.Invoke(new Action(() =>
                     {
+                        
                         MainForm.Main_Progressbar.Maximum = fileContentSplit.Length;
                         MainForm.Main_Progressbar.Value = 0;
                         MainForm.Main_Progressbar.Visible = true;
@@ -324,11 +325,16 @@ namespace File_Transfer_2
                                     }
                                 }
                             }
+                            byte[] message_bytes = Convert.FromBase64String(message);
+                            AppendAllBytes(flPath, message_bytes);
+                            MainForm.Invoke(new Action(() =>
+                            {
+                                MainForm.EstimatedTimeLeft.Text = message_bytes.Length.ToString();
+                            }));
 
-                            AppendAllBytes(flPath, Convert.FromBase64String(message));
-                            /* Base 64 strings allow us to store bytes without loosing any data in
-                             * the conversion. */
-                        }
+                                /* Base 64 strings allow us to store bytes without loosing any data in
+                                 * the conversion. */
+                            }
                         else
                         {
                             ConnectionFileName[clientId] = message.Split('|')[0];

@@ -33,6 +33,8 @@ namespace File_Transfer_2
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.Main_TabControl = new System.Windows.Forms.TabControl();
             this.Main_TabPage = new System.Windows.Forms.TabPage();
+            this.EstimatedTimeLeft = new System.Windows.Forms.Label();
+            this.speed = new System.Windows.Forms.Label();
             this.Close_Button = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.NoDevices_Label = new System.Windows.Forms.Label();
@@ -52,7 +54,6 @@ namespace File_Transfer_2
             this.openFileDlg = new System.Windows.Forms.OpenFileDialog();
             this.folderDlg = new System.Windows.Forms.FolderBrowserDialog();
             this.Main_BackgroundWorker = new System.ComponentModel.BackgroundWorker();
-            this.speed = new System.Windows.Forms.Label();
             this.Main_TabControl.SuspendLayout();
             this.Main_TabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -72,6 +73,7 @@ namespace File_Transfer_2
             // Main_TabPage
             // 
             this.Main_TabPage.BackColor = System.Drawing.Color.White;
+            this.Main_TabPage.Controls.Add(this.EstimatedTimeLeft);
             this.Main_TabPage.Controls.Add(this.speed);
             this.Main_TabPage.Controls.Add(this.Close_Button);
             this.Main_TabPage.Controls.Add(this.pictureBox1);
@@ -86,6 +88,23 @@ namespace File_Transfer_2
             this.Main_TabPage.Size = new System.Drawing.Size(576, 284);
             this.Main_TabPage.TabIndex = 0;
             this.Main_TabPage.Text = "Main";
+            // 
+            // EstimatedTimeLeft
+            // 
+            this.EstimatedTimeLeft.AutoSize = true;
+            this.EstimatedTimeLeft.Location = new System.Drawing.Point(199, 196);
+            this.EstimatedTimeLeft.Name = "EstimatedTimeLeft";
+            this.EstimatedTimeLeft.Size = new System.Drawing.Size(35, 13);
+            this.EstimatedTimeLeft.TabIndex = 15;
+            this.EstimatedTimeLeft.Text = "label4";
+            // 
+            // speed
+            // 
+            this.speed.AutoSize = true;
+            this.speed.Location = new System.Drawing.Point(192, 196);
+            this.speed.Name = "speed";
+            this.speed.Size = new System.Drawing.Size(0, 13);
+            this.speed.TabIndex = 14;
             // 
             // Close_Button
             // 
@@ -266,14 +285,6 @@ namespace File_Transfer_2
             this.Main_BackgroundWorker.WorkerReportsProgress = true;
             this.Main_BackgroundWorker.WorkerSupportsCancellation = true;
             // 
-            // speed
-            // 
-            this.speed.AutoSize = true;
-            this.speed.Location = new System.Drawing.Point(192, 196);
-            this.speed.Name = "speed";
-            this.speed.Size = new System.Drawing.Size(0, 13);
-            this.speed.TabIndex = 14;
-            // 
             // Form1
             // 
             this.BackColor = System.Drawing.Color.White;
@@ -319,6 +330,7 @@ namespace File_Transfer_2
         private System.Windows.Forms.PictureBox pictureBox1;
         public System.Windows.Forms.Button Close_Button;
         private System.Windows.Forms.Label speed;
+        public System.Windows.Forms.Label EstimatedTimeLeft;
     }
 }
 
